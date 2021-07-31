@@ -40,3 +40,34 @@
 button {
   font-size: calc(10px + 2vmin);
 }
+
+
+.cardContainer {
+      border: '1px solid';
+      height: 100;
+      width: 100;
+  }
+
+.suiteSymbol {
+      height: 24;
+      width: 24;
+}
+
+.symbolBottom {
+    float: right;
+    text-align: right;
+}
+  
+.AI_container {
+  transform: 'rotate(90deg)';
+  margin: 10;
+  border: '1px solid';
+  height: 250;
+  width: 200;
+  margin: 10;
+}
+
+.AI_symbol {
+  height: 200;
+  width: 200;
+}

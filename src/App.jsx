@@ -1,14 +1,31 @@
 import React, { useState } from 'react'
-import logo from './logo.svg'
 import './App.css'
-import Card from './card'
+import { createStore }from 'redux'
+import { Provider } from 'react-redux'
+import cardReducer from './reducers/cardReducer'
+import ConnectedComponent from './ConnectedComponent'
+
+
+const store = createStore(cardReducer)
 
 function App() {
-  const [count, setCount] = useState(0)
 
   return (
-    <Card/>
+    <Provider store={store}>
+      <ConnectedComponent/>
+    </Provider>
   )
 }
 
 export default App
+
+const styles = {
+  P1 : {},
+  AI_1 : {
+    // transform: 'rotate(90deg)',
+    margin: 10
+  },
+  AI_2 : {},
+  AI_3 : {}
+}
+

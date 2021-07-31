@@ -1,0 +1,13 @@
+
+.optionsContainer {
+        flex: 'row';
+        border: 1px solid;
+        margin: 20px;
+        padding: 10px;
+}
+    
+.option {
+        border: 1px solid;
+        margin: 20px;
+        padding: 5px;
+}

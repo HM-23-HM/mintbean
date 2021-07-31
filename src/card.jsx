@@ -1,11 +1,51 @@
-import React from 'react'
+import React from "react";
+import hearts from './img/hearts.png'
+import spades from './img/spades.jpg'
+import clubs from './img/clubs.png'
+import diamonds from './img/diamonds.png'
+import styles from './css/cards.module.css'
 
-export const Card = () => {
-    return(
-        <div>
-            <p>
-                Suite and Symbol goes here
-            </p>
-        </div>
-    )
-}
+
+const Card = ({suite, symbol}) => {
+
+const suites = new Map()
+
+suites.set('Hearts',hearts)
+suites.set('Clubs',clubs)
+suites.set('Spades',spades)
+suites.set('Diamonds',diamonds)
+
+    const pickSuite = (suite) => {
+        return suites.get(suite)
+    }
+
+  return (
+    <span className={styles.cardContainer}>
+    <div className={styles.innerCard}>
+      <span className={styles.symbolStyle}>{symbol}</span>
+      <img src={pickSuite(suite)} className={styles.suiteStyle}/>
+    </div>
+    </span>
+  );
+};
+
+export default Card;
+
+
+// const styles = {
+// container: {
+//     border: '1px solid',
+//     height: 100,
+//     width: 100
+// },
+// suiteStyle : {
+//     height: 24,
+//     width: 24
+// },
+
+// symbolTop : {},
+// symbolBottom : {
+//     right: 5
+// }
+
+// }

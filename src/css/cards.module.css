@@ -1,0 +1,34 @@
+.cardContainer {
+    border: 1px solid red;
+    height: 100px;
+    width: 100px;
+    padding: 10px;
+    margin: 10px;
+    display: inline-block;
+}
+
+.innerCard{
+    display: flex;
+    border: 1px solid;
+    height: 90px;
+    width: 90px;
+    justify-content: center;
+    align-items: center;
+}
+
+.suiteStyle {
+        height: 24px;
+        width: 24px;
+        border: 1px solid;    
+        margin: 5px;
+        padding: 5px;    
+}
+
+.symbolStyle {
+    border: 1px solid;
+    padding: 5px;
+}
+    
+.playerOneDeck {
+    border: 1px solid ;
+}

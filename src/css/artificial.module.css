@@ -1,0 +1,12 @@
+.container {
+            border: 1px solid;
+            height: 250px;
+            width: 200px;
+            margin: 10px;
+}
+        
+.symbol {
+            height: 200px;
+            width: 200px;
+}
+        

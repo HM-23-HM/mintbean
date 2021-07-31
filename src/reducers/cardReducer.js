@@ -1,4 +1,8 @@
-initialState = new Map() 
+import { SEND_CARDS, GO_FISH } from '../actions/actions'
+import _ from 'lodash'
+
+
+let initialState = new Map() 
 initialState.set('P_1', [])
 initialState.set('AI_1', [])
 initialState.set('AI_2', [])
@@ -18,41 +22,9 @@ const symbols = ['2','3','4','5','6','7','8','9','10','J','Q','K','A']
 
 var fullDeck = []
 
-createFullDeck = () => {
-    
-    suites.forEach((suite) => {
-        symbols.forEach((symbol) => {
-            card = {
-                suite,
-                symbol
-            }
-            fullDeck.push(card)
-        })
-        
-    })
-}
-
-getRandomInteger = (min, max) => {
-    min = Math.ceil(min);
-    max = Math.floor(max);
-    return Math.floor(Math.random() * (max - min + 1) + min);
-}
-
-getRandomCard = (deck) => {
-    return deck[getRandomInteger(0,deck.length-1)]
-}
-
-addFullSet = (cardSymbol,playerSet) => {
-    let set = initialState.get(playerSet)
-    set.push(cardSymbol)
-    initialState.set(playerSet,set)
-
-    console.log("A player has a full set!")
-}
-
 initialState.set('remainingDeck',fullDeck)
 
-dealCards = () => {
+const dealCards = () => {
     let remaining = initialState.get('remainingDeck')
     let P1cards = []
     let AI1cards = []
@@ -122,29 +94,50 @@ dealCards = () => {
     initialState.set('AI_3', AI3cards)
     initialState.set('remainingDeck',remaining)
 
+    initialState.set('P1_tally',P1_tally)
+    initialState.set('AI_1_tally',AI_1_tally)
+    initialState.set('AI_2_tally',AI_2_tally)
+    initialState.set('AI_3_tally',AI_3_tally)
+
     return initialState
 }
 
-AI_ask = (asker, beingAsked) => {
-    let options = presentOptions(asker)
-    randomOption = options[getRandomInteger(0,options.length-1)]
-
-    let beingAskedCards = initialState.get(beingAsked)
-    let matchingCards = beingAskedCards.filter((card) => card.symbol == randomOption)
-    console.log("Matching cards ", matchingCards)
-
-    if (matchingCards.length > 0){
-        console.log("A matching card was found!")
-        sendCards(asker, beingAsked, matchingCards)
-    } else {
-        console.log("No matching card. Go Fish!")
-        goFish(asker)
-    }
+const createFullDeck = () => {
+    
+    suites.forEach((suite) => {
+        symbols.forEach((symbol) => {
+            let card = {
+                suite,
+                symbol
+            }
+            fullDeck.push(card)
+        })
+        
+    })
 }
 
-sendCards = (asker, beingAsked, matchingCards) => {
-    askerCards = initialState.get(asker)
-    beingAskedCards = initialState.get(beingAsked)
+const getRandomInteger = (min, max) => {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min + 1) + min);
+}
+
+const getRandomCard = (deck) => {
+    return deck[getRandomInteger(0,deck.length-1)]
+}
+
+const addFullSet = (cardSymbol,playerSet) => {
+    let set = initialState.get(playerSet)
+    set.push(cardSymbol)
+    initialState.set(playerSet,set)
+
+    console.log("A player has a full set!")
+}
+
+const sendCards = (state, asker, beingAsked, matchingCards) => {
+    let newState = _.cloneDeep(state)
+    let askerCards = newState.get(asker)
+    let beingAskedCards = newState.get(beingAsked)
 
     matchingCards.forEach((card) => {
         askerCards.push(card)
@@ -153,41 +146,54 @@ sendCards = (asker, beingAsked, matchingCards) => {
     let matchingSymbol = matchingCards[0].symbol
     beingAskedCards = beingAskedCards.filter((card) => card.symbol != matchingSymbol)
 
-    console.log("New asker cards ", askerCards)
-    console.log("New being asked cards ", beingAskedCards)
+    newState.set(asker, askerCards)
+    newState.set(beingAsked, beingAskedCards)
+
+    return newState
 
 }
 
-P1_ask = () => {}
-
-presentOptions = (asker) => {
-    let options = []
-    askersCards = initialState.get(asker)
-    askersCards.forEach((card) => {
-        let option = card.symbol
-        if (!options.includes(option)){
-            options.push(option)
-        }
-    })
-    return options
-}
-
-goFish = (asker) => {
-    let askerCards = initialState.get(asker)
-    let remainingDeck = initialState.get('remainingDeck')
+const goFish = (state, asker) => {
+    let newState = _.cloneDeep(state)
+    let askerCards = newState.get(asker)
+    let remainingDeck = newState.get('remainingDeck')
 
     let randomCard = getRandomCard(remainingDeck)
     console.log("New card from deck is ", randomCard)
     askerCards.push(randomCard)
 
     remainingDeck = remainingDeck.filter((card) => card != randomCard)
-    console.log(`New deck for ${asker}  is` , askerCards)
+    // console.log(`New deck for ${asker}  is` , askerCards)
 
-    initialState.set('remainingDeck', remainingDeck)
+    newState.set('remainingDeck', remainingDeck)
+    newState.set(asker, askerCards)
+
+    return newState
 }
 
 createFullDeck()
 
 dealCards()
 
-AI_ask(asking = "AI_1", beingAsked = "AI_2")
+const cardReducer = (state = initialState, action) => {
+    switch(action.type){
+        case SEND_CARDS: {
+            let asker = action.asker
+            let beingAsked = action.beingAsked
+            let matchingCards = action.matchingCards
+            let newState = sendCards(state, asker, beingAsked, matchingCards)
+            return newState
+        }
+            
+        case GO_FISH: {
+            let asker = action.asker
+            let newState = goFish(state, asker)
+            return newState
+        }
+
+        default:
+            return state
+    }
+}
+
+export default cardReducer
