@@ -1,13 +1,23 @@
 import React from 'react'
 import Card from './card'
 import styles from './css/cards.module.css'
+import { connect } from 'react-redux'
 
-const PlayerOne = ({cards, areOptionsVisible}) => {
+const mapStateToProps = (state) => ({
+    P_1_sets: state.get('P_1_sets'),
+})
+
+const PlayerOne = (props) => {
 
 
     return(
-        <span>
-            {cards && cards.map((card) => (
+        <div>
+            <p>Complete sets: {props.P_1_sets.map((set) => (
+                <span key={set}>{`${set} `}</span>
+            ))}</p>
+            
+            <span>
+            {props.cards && props.cards.map((card) => (
                 <Card 
                     key={card.suite+card.symbol}
                     suite={card.suite}
@@ -17,7 +27,8 @@ const PlayerOne = ({cards, areOptionsVisible}) => {
             ))}
 
         </span>
+        </div>
     )
 }
 
-export default PlayerOne
+export default connect(mapStateToProps)(PlayerOne)

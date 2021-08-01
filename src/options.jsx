@@ -46,7 +46,7 @@ const Options = (props) => {
     }
         
     return(
-        <span className={styles.optionsContainer}>
+        <div className={styles.optionsContainer}>
         {options.map((option) => 
             (
                 <span 
@@ -56,7 +56,7 @@ const Options = (props) => {
                 >{option}</span>
             )
         )}
-        </span>
+        </div>
 
     )
 }
