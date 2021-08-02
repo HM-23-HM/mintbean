@@ -69,8 +69,6 @@ const AI_player = (props) => {
 
     const AI_ask = () => {
 
-        // console.log(`${asker} selected the following option: ${option} to ask ${beingAsked}`)
-
         let beingAskedCards = mapIDtoStateProps.get(beingAsked)
         let matchingCards = beingAskedCards.filter((card) => card.symbol == option)
 
@@ -96,24 +94,16 @@ const AI_player = (props) => {
 }
 
 
-
     return(
         <div 
             style={ props.myTurn ? highlightStyle : {} }
+            className={styles.container}
         >
-            <p>{props.id}</p>
-            <img src={symbol} className={styles.symbol}/>
-
-            {/* <p>My cards are</p>
-            {mapIDtoStateProps.get(`${asker}`).map((card)=> (
-                <span key={card.symbol + card.suite}>{`${card.symbol}/${card.suite} || `}</span>
-            ))} */}
-            
-
-            <p>{asker} Completed sets are: {mapIDtoStateProps.get(`${asker}_sets`).map((set) => (
-                <span key={set}>{`${set} `}</span>
+            <h4>{props.id}</h4>
+            <p >{mapIDtoStateProps.get(`${asker}_sets`).map((set) => (
+                <span key={set} className={styles.completeSet}>{`${set} `}</span>
             ))}</p>
-            
+            <img src={symbol} className={styles.symbol}/>
 
             {props.myTurn &&
             <p>{`Hey ${beingAsked}, do you have any ${option}'s ?`}</p>}
@@ -124,5 +114,6 @@ const AI_player = (props) => {
 export default connect(mapStateToProps, mapDispatchToProps)(AI_player)
 
 const highlightStyle = {
-    border: '2px solid yellow'
+    border: '2px solid yellow',
+    borderRadius: '5px'
 }

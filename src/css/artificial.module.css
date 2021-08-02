@@ -1,12 +1,25 @@
 .container {
-            border: 1px solid;
-            height: 250px;
-            width: 200px;
-            margin: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
 }
         
 .symbol {
-            height: 200px;
-            width: 200px;
+            height: 100px;
+            width: 100px;
 }
         
+.completeSet {
+    border: 1px solid green;
+    border-radius: 50%;
+    padding: 6px;
+    margin: 5px;
+
+}
+
+h4 {
+    margin: 0px;
+    color: #23A8A8;
+}

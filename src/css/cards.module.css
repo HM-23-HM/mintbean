@@ -1,32 +1,32 @@
 .cardContainer {
     border: 1px solid red;
-    height: 100px;
-    width: 100px;
+    height: 80px;
+    width: 60px;
     padding: 10px;
     margin: 10px;
     display: inline-block;
+    border-radius: 10px;
 }
 
 .innerCard{
     display: flex;
-    border: 1px solid;
-    height: 90px;
-    width: 90px;
+    height: 70px;
+    width: 60px;
     justify-content: center;
     align-items: center;
 }
 
 .suiteStyle {
-        height: 24px;
-        width: 24px;
-        border: 1px solid;    
-        margin: 5px;
+        height: 28px;
+        width: 28px;
+        margin: 0px;
         padding: 5px;    
 }
 
 .symbolStyle {
-    border: 1px solid;
     padding: 5px;
+    font-size: 18px;
+    font-weight: 600;
 }
     
 .playerOneDeck {

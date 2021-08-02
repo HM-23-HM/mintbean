@@ -12,9 +12,6 @@ const PlayerOne = (props) => {
 
     return(
         <div>
-            <p>Complete sets: {props.P_1_sets.map((set) => (
-                <span key={set}>{`${set} `}</span>
-            ))}</p>
             
             <span>
             {props.cards && props.cards.map((card) => (

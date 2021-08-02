@@ -16,11 +16,8 @@ const mapStateToProps = (state) => ({
   isAI_1_Turn: state.get('AI_1_turn'),
   isAI_2_Turn: state.get('AI_2_turn'),
   isAI_3_Turn: state.get('AI_3_turn'),
-  remDeck: state.get('remainingDeck').length,
-  P_1_sets_length: state.get('P_1_sets').length,
-  AI_1_sets_length: state.get('AI_1_sets').length,
-  AI_2_sets_length: state.get('AI_2_sets').length,
-  AI_3_sets_length: state.get('AI_3_sets').length,
+  P_1_sets: state.get('P_1_sets'),
+  remDeck: state.get('remainingDeck').length
 
 });
 
@@ -51,24 +48,6 @@ whoseTurnItIs.set(4,'AI_3_turn')
 
 let playersTurnArray = ['P_1_turn','AI_1_turn','AI_2_turn', 'AI_3_turn' ]
 
-let P_1_final = props.P_1_sets_length
-let AI_1_final = props.AI_1_sets_length
-let AI_2_final = props.AI_2_sets_length
-let AI_3_final = props.AI_3_sets_length
-
-let finalScores = [P_1_final,AI_1_final,AI_2_final,AI_3_final]
-let topScore = Math.max(...finalScores)
-
-if(topScore == P_1_final){
-  var winner = 'P_1'
-} else if(topScore == AI_1_final){
-  var winner = 'AI_1'
-} else if(topScore == AI_2_final){
-  var winner = 'AI_2'
-} else {
-  var winner = 'AI_3'
-}
-
   const nextPlayersTurn = () => {
     if (whoseTurn == 4) {
       whoseTurn = 1;
@@ -83,27 +62,9 @@ if(topScore == P_1_final){
       let notTheirTurn = playersTurnArray.filter((element) => element != thisPlayersTurn)
       var [not1, not2, not3] = notTheirTurn
       props.dispatchMyTurn(thisPlayersTurn, not1, not2, not3)
-      // console.log(`It is now ${thisPlayersTurn} turn`)
     }
 
   } 
-
-  const highlightPlayer = (whoseTurn) => {
-    switch(whoseTurn){
-      case 1:{
-
-      }
-      case 2:{
-
-      }
-      case 3: {
-
-      }
-      case 4: {
-
-      }
-    }
-  };
 
   const askPlayer = (playerId) => {
     setBeingAsked(playerId)
@@ -112,7 +73,6 @@ if(topScore == P_1_final){
 
 
   const [beingAsked, setBeingAsked] = useState("AI_1");
-  // useEffect(() => selectPlayer(beingAsked), [beingAsked])
 
   let options = []
     if(props.playerOneCards){
@@ -125,7 +85,8 @@ if(topScore == P_1_final){
 }
 
   return (
-    <div className={styles.container}>
+    <div>
+    <div className={styles.upperContainer}>
       <div 
       onClick={() => askPlayer("AI_1")}
       className={styles.artificial_1}
@@ -173,29 +134,45 @@ if(topScore == P_1_final){
       <div className={styles.deck}>
         <Deck />
       </div>
+      </div>
 
+      <div className={styles.lowerContainer}>
       <div
       className={styles.playerOne}
       >
+        <div
+          className={styles.P_1_cards}>
         <PlayerOne
           id="P_1"
           cards={props.playerOneCards}
           asked={beingAsked == "P_1" ? true : false}
           myTurn={props.isP_1_Turn}
         />
-        <div onClick={() => nextPlayersTurn()}>
+        </div>
+        <div
+        className={styles.P1setsContainer}>
+        <p >{props.P_1_sets.map((set) => (
+                <span key={`${set}+${set}`} className={styles.completeSets}>{`${set} `}</span>
+            ))}</p>
+        </div>
+        <div 
+          onClick={() => nextPlayersTurn()}
+          className={styles.optionsContainer}>
            { props.isP_1_Turn && 
            <Options 
            options={options}
            beingAsked={beingAsked}/> }
         </div>
+        <div className={styles.nextPlayerButtonContainer}>
+        { ( props.remDeck > 0 ) ? <button
+        className={styles.nextPlayerButton}
+        onClick={() => nextPlayersTurn()}
+        >Next Player's Turn</button> : <p>{`Game Over!`}</p> }
+      </div>
       </div>
 
-      <div className={styles.nextPlayerButton}>
-        { props.remDeck > 0 ? <button
-        onClick={() => nextPlayersTurn()}
-        >Next Player's Turn</button> : <p>{`Game Over! ${winner} is the winner`}</p> }
-      </div>
+      
+    </div>
     </div>
   );
 };
