@@ -23,7 +23,6 @@ const mapDispatchToProps = {
 
 const AI_player = (props) => {
 
-
     useEffect(() => play(props.myTurn), [props.myTurn])
 
     const mapIDtoStateProps = new Map()
@@ -74,9 +73,11 @@ const AI_player = (props) => {
 
         if (matchingCards.length > 0){
             console.log("A matching card was found!")
+            setDratsTextVisible(true)
             props.dispatchSendCards(asker, beingAsked, matchingCards)
         } else {
             console.log("No matching card. Go Fish!")
+            setGoFishVisibility(true)
             props.dispatchGoFish(asker)
         }
 }
@@ -84,6 +85,8 @@ const AI_player = (props) => {
     const [beingAsked, setBeingAsked] = useState(selectRandomPlayer(props.id))
     const [option, setOption] = useState(getRandomOption(mapIDtoStateProps.get(`${props.id}`)))
     const [asker, setAsker] = useState(props.id)
+    const [ isGoFishTextVisible, setGoFishVisibility ] = useState(false)
+    const [ isDratsTextVisible, setDratsTextVisible ] = useState(false)
 
     const play = (myTurn) => {
     if(myTurn){
@@ -103,8 +106,21 @@ const AI_player = (props) => {
             <p >{mapIDtoStateProps.get(`${asker}_sets`).map((set) => (
                 <span key={set} className={styles.completeSet}>{`${set} `}</span>
             ))}</p>
+            <div className={styles.imgContainer}>
+            <span 
+                className={styles.textGoFish}
+                style={isGoFishTextVisible ? textVisible : textInvisible}
+                >
+                    Go Fish!
+            </span>
+            <span 
+                className={styles.textDrats}
+                style={isDratsTextVisible ? textVisible : textInvisible}
+                >
+                    Drats!
+            </span>
             <img src={symbol} className={styles.symbol}/>
-
+            </div>
             {props.myTurn &&
             <p>{`Hey ${beingAsked}, do you have any ${option}'s ?`}</p>}
         </div>
@@ -116,4 +132,12 @@ export default connect(mapStateToProps, mapDispatchToProps)(AI_player)
 const highlightStyle = {
     border: '2px solid yellow',
     borderRadius: '5px'
+}
+
+const textVisible = {
+    display: 'visible'
+}
+
+const textInvisible = {
+    display: 'none'
 }

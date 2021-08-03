@@ -160,6 +160,8 @@ const sendCards = (state, asker, beingAsked, matchingCards) => {
     newState.set(asker, askerCards)
     newState.set(beingAsked, beingAskedCards)
 
+    if(beingAsked == 'P_1') console.warn("beingAsked -- P1 -- cards are ", beingAskedCards)
+
     return newState
 
 }

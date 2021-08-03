@@ -5,6 +5,7 @@ import { connect } from 'react-redux'
 
 const mapStateToProps = (state) => ({
     P_1_sets: state.get('P_1_sets'),
+    cards: state.get('P_1')
 })
 
 const PlayerOne = (props) => {

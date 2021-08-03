@@ -144,7 +144,6 @@ let playersTurnArray = ['P_1_turn','AI_1_turn','AI_2_turn', 'AI_3_turn' ]
           className={styles.P_1_cards}>
         <PlayerOne
           id="P_1"
-          cards={props.playerOneCards}
           asked={beingAsked == "P_1" ? true : false}
           myTurn={props.isP_1_Turn}
         />
