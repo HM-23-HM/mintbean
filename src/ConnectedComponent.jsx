@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { connect } from "react-redux";
 import AI_player from "./AI_player";
 import Deck from "./deck";

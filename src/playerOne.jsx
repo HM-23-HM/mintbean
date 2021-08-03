@@ -26,4 +26,5 @@ const PlayerOne = (props) => {
   );
 };
 
+
 export default connect(mapStateToProps)(PlayerOne);
