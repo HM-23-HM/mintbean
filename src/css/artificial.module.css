@@ -24,28 +24,4 @@ h4 {
   color: #23a8a8;
 }
 
-.textGoFish {
-  border: 1px solid black;
-  position: relative;
-  top: -50px;
-  left: 50px;
-  background-color: #FCEED2;
-  padding: 10px;
-  border-radius: 5px;
-  /* display: none; */
-}
 
-.textDrats {
-    border: 1px solid black;
-    position: relative;
-    top: -50px;
-    left: 70px;
-    background-color: #e8ffff;
-    padding: 10px;
-    border-radius: 5px;
-    /* display: none; */
-
-  }
-
-/* .imgContainer {
-} */

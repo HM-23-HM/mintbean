@@ -31,21 +31,3 @@ suites.set('Diamonds',diamonds)
 
 export default Card;
 
-
-// const styles = {
-// container: {
-//     border: '1px solid',
-//     height: 100,
-//     width: 100
-// },
-// suiteStyle : {
-//     height: 24,
-//     width: 24
-// },
-
-// symbolTop : {},
-// symbolBottom : {
-//     right: 5
-// }
-
-// }

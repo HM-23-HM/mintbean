@@ -64,16 +64,3 @@ const Options = (props) => {
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Options);
-
-// const styles = {
-//     optionsContainer: {
-//         flex: 'row',
-//         // border: '1px solid',
-//         margin: 20
-//     },
-//     option: {
-//         border: '1px solid',
-//         margin: 10,
-//         padding: 5,
-//     }
-// }
