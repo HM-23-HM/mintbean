@@ -1,33 +1,47 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
+
 import AI_player from "./AI_player";
 import Deck from "./deck";
 import PlayerOne from "./playerOne";
 import Options from "./options";
-import styles from "./css/connected.module.css";
-import { myTurn } from "./actions/actions";
+import styles from "../css/connected.module.css";
+import { myTurn } from "../actions/actions";
+
+import spongebob from '../img/spongebob.jpg'
+import nemo from '../img/nemo.jpg'
+import ariel from '../img/ariel.png'
 
 const mapStateToProps = (state) => ({
   playerOneCards: state.get("P_1"),
   AI_1_cards: state.get("AI_1"),
   AI_2_cards: state.get("AI_2"),
   AI_3_cards: state.get("AI_3"),
+
   isP_1_Turn: state.get("P_1_turn"),
   isAI_1_Turn: state.get("AI_1_turn"),
   isAI_2_Turn: state.get("AI_2_turn"),
   isAI_3_Turn: state.get("AI_3_turn"),
+
   P_1_sets: state.get("P_1_sets"),
   remDeck: state.get("remainingDeck").length,
 });
 
 const mapDispatchToProps = {
-  dispatchMyTurn: (thisPlayersTurn, not1, not2, not3) =>
+  dispatchMyTurn: (thisPlayersTurn: string, not1: string, not2: string, not3: string) =>
     myTurn(thisPlayersTurn, not1, not2, not3),
 };
 
 let whoseTurn = 0;
 
+
+
+
+
 const ConnectedComponent = (props) => {
+
+  const [beingAsked, setBeingAsked] = useState<String>("AI_1");
+
   const mapAItoCards = new Map();
   const whoseTurnItIs = new Map();
 
@@ -63,19 +77,18 @@ const ConnectedComponent = (props) => {
     }
   };
 
-  const askPlayer = (playerId) => {
+  const askPlayer = (playerId: string) => {
     setBeingAsked(playerId);
     alert(`Please select an option to ask ${playerId} for`);
   };
 
-  const [beingAsked, setBeingAsked] = useState("AI_1");
 
-  let options = [];
+  let playerOneOptions: string[] = [];
   if (props.playerOneCards) {
     props.playerOneCards.forEach((card) => {
-      let option = card.symbol;
-      if (!options.includes(option)) {
-        options.push(option);
+      let option: string = card.symbol;
+      if (!playerOneOptions.includes(option)) {
+        playerOneOptions.push(option);
       }
     });
   }
@@ -90,6 +103,7 @@ const ConnectedComponent = (props) => {
             asked={beingAsked == "AI_1" ? true : false}
             myTurn={props.isAI_1_Turn}
             className="AI_container"
+            picture={spongebob}
           />
         </div>
 
@@ -99,6 +113,7 @@ const ConnectedComponent = (props) => {
             cards={props.AI_2_cards}
             asked={beingAsked == "AI_2" ? true : false}
             myTurn={props.isAI_2_Turn}
+            picture={nemo}
           />
         </div>
 
@@ -108,6 +123,7 @@ const ConnectedComponent = (props) => {
             cards={props.AI_3_cards}
             asked={beingAsked == "AI_3" ? true : false}
             myTurn={props.isAI_3_Turn}
+            picture={ariel}
           />
         </div>
 
@@ -140,7 +156,7 @@ const ConnectedComponent = (props) => {
             className={styles.optionsContainer}
           >
             {props.isP_1_Turn && (
-              <Options options={options} beingAsked={beingAsked} />
+              <Options options={playerOneOptions} beingAsked={beingAsked} />
             )}
           </div>
           <div className={styles.nextPlayerButtonContainer}>
@@ -148,6 +164,7 @@ const ConnectedComponent = (props) => {
               <button
                 className={styles.nextPlayerButton}
                 onClick={() => nextPlayersTurn()}
+                disabled={props.isP_1_Turn}
               >
                 Next Player's Turn
               </button>

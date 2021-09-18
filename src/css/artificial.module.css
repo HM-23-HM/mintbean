@@ -6,6 +6,11 @@
   padding: 8px;
 }
 
+.imgContainer {
+  border-width: 1px;
+  border-color: black;
+}
+
 .symbol {
   height: 100px;
   width: 100px;

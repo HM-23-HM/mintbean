@@ -1,8 +1,14 @@
 import React, { useEffect, useState } from "react";
-import symbol from "./img/AI_cards.jpg";
-import styles from "./css/artificial.module.css";
+import symbol from "../img/AI_cards.jpg";
+import styles from "../css/artificial.module.css";
 import { connect } from "react-redux";
-import { goFish, sendCards } from "./actions/actions";
+import { goFish, sendCards } from "../actions/actions";
+
+type Card = {
+  suite: string,
+  symbol: string,
+}
+
 
 const mapStateToProps = (state) => ({
   P_1_cards: state.get("P_1"),
@@ -16,12 +22,19 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = {
-  dispatchSendCards: (asker, being_Asked, matchingCards) =>
-    sendCards(asker, being_Asked, matchingCards),
-  dispatchGoFish: (asker) => goFish(asker),
+  dispatchSendCards: (asker: string, being_Asked: string, matchingCards: Card[]) => sendCards(asker, being_Asked, matchingCards),
+  dispatchGoFish: (asker: string) => goFish(asker),
 };
 
+
+
+
 const AI_player = (props) => {
+
+  const [asker, setAsker] = useState<String>(props.id);
+  const [isDratsVisible, setDratsTextVisible] = useState<Boolean>(false)
+  const [isGoFishVisible, setGoFishVisibility] = useState<Boolean>(false)
+
   useEffect(() => play(props.myTurn), [props.myTurn]);
 
   const mapIDtoStateProps = new Map();
@@ -34,21 +47,21 @@ const AI_player = (props) => {
   mapIDtoStateProps.set("AI_2_sets", props.AI_2_sets);
   mapIDtoStateProps.set("AI_3_sets", props.AI_3_sets);
 
-  const getRandomInteger = (min, max) => {
+  const getRandomInteger = (min: number, max: number) => {
     min = Math.ceil(min);
     max = Math.floor(max);
     return Math.floor(Math.random() * (max - min + 1) + min);
   };
 
-  const selectRandomPlayer = (id) => {
+  const selectRandomPlayer = (id: string) => {
     const playerIds = ["P_1", "AI_1", "AI_2", "AI_3"];
     let playerOptions = playerIds.filter((option) => option != id);
     let randomPlayer = playerOptions[getRandomInteger(0, 2)];
     return randomPlayer;
   };
 
-  const getRandomOption = (cards) => {
-    let options = [];
+  const getRandomOption = (cards: Card[]) => {
+    let options: string[] = [];
     cards.forEach((card) => {
       let option = card.symbol;
       if (!options.includes(option)) {
@@ -61,29 +74,29 @@ const AI_player = (props) => {
   };
 
   const AI_ask = () => {
-    let beingAskedCards = mapIDtoStateProps.get(beingAsked);
-    let matchingCards = beingAskedCards.filter((card) => card.symbol == option);
+    let beingAskedCards: Card[] = mapIDtoStateProps.get(beingAsked);
+    let matchingCards: Card[] = beingAskedCards.filter((card) => card.symbol == option);
 
     if (matchingCards.length > 0) {
-      console.log("A matching card was found!");
+      // console.log("A matching card was found!");
       setDratsTextVisible(true);
+      // console.log(asker, beingAsked, matchingCards)
       props.dispatchSendCards(asker, beingAsked, matchingCards);
     } else {
-      console.log("No matching card. Go Fish!");
+      // console.log("No matching card. Go Fish!");
       setGoFishVisibility(true);
       props.dispatchGoFish(asker);
     }
   };
 
-  const [beingAsked, setBeingAsked] = useState(selectRandomPlayer(props.id));
-  const [option, setOption] = useState(
+  const [beingAsked, setBeingAsked] = useState<String>(selectRandomPlayer(props.id));
+  const [option, setOption] = useState<String>(
     getRandomOption(mapIDtoStateProps.get(`${props.id}`))
   );
-  const [asker, setAsker] = useState(props.id);
 
-  const play = (myTurn) => {
+  const play = (myTurn: boolean) => {
     if (myTurn) {
-      setTimeout(AI_ask(), 3000);
+      setTimeout(() => AI_ask(), 3000);
       setBeingAsked(selectRandomPlayer(props.id));
       setOption(getRandomOption(mapIDtoStateProps.get(`${props.id}`)));
     }
@@ -101,7 +114,7 @@ const AI_player = (props) => {
         ))}
       </p>
       <div className={styles.imgContainer}>
-        <img src={symbol} className={styles.symbol} />
+        <img src={props.picture} className={styles.symbol} />
       </div>
       {props.myTurn && (
         <p>{`Hey ${beingAsked}, do you have any ${option}'s ?`}</p>

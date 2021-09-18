@@ -2,7 +2,7 @@ import { SEND_CARDS, GO_FISH, MY_TURN } from "../actions/actions";
 import _ from "lodash";
 
 let initialState = new Map();
-initialState.set("P_1", ["init"]);
+initialState.set("P_1", [""]);
 initialState.set("AI_1", []);
 initialState.set("AI_2", []);
 initialState.set("AI_3", []);
@@ -37,16 +37,21 @@ const symbols = [
   "A",
 ];
 
+type Card = {
+  suite: string,
+  symbol: string,
+}
+
 var fullDeck = [];
 
 initialState.set("remainingDeck", fullDeck);
 
 const dealCards = () => {
   let remaining = initialState.get("remainingDeck");
-  let P1cards = [];
-  let AI1cards = [];
-  let AI2cards = [];
-  let AI3cards = [];
+  let P1cards: Card[] = [];
+  let AI1cards: Card[] = [];
+  let AI2cards: Card[] = [];
+  let AI3cards: Card[] = [];
 
   let P1_tally = {};
   let AI_1_tally = {};
@@ -55,19 +60,19 @@ const dealCards = () => {
 
   for (let i = 0; i < 5; i++) {
     //P1
-    let randomCard = getRandomCard(remaining);
+    let randomCard: Card = getRandomCard(remaining);
     P1cards.push(randomCard);
     let cardSymbol = randomCard.symbol;
     if (P1_tally[cardSymbol]) {
       P1_tally[cardSymbol]++;
       if (P1_tally[cardSymbol] == 4) {
-        addFullSet(cardSymbol, "P_1_sets");
+        addFullSet(cardSymbol, "P_1");
       }
     } else {
       P1_tally[cardSymbol] = 1;
     }
 
-    remaining = remaining.filter((card) => card != randomCard);
+    remaining = remaining.filter((card: Card) => card != randomCard);
 
     //AI 1
     randomCard = getRandomCard(remaining);
@@ -76,13 +81,13 @@ const dealCards = () => {
     if (AI_1_tally[cardSymbol]) {
       AI_1_tally[cardSymbol]++;
       if (AI_1_tally[cardSymbol] == 4) {
-        addFullSet(cardSymbol, "AI_1_sets");
+        addFullSet(cardSymbol, "AI_1");
       }
     } else {
       AI_1_tally[cardSymbol] = 1;
     }
 
-    remaining = remaining.filter((card) => card != randomCard);
+    remaining = remaining.filter((card: Card) => card != randomCard);
 
     //AI 2
     randomCard = getRandomCard(remaining);
@@ -91,12 +96,12 @@ const dealCards = () => {
     if (AI_2_tally[cardSymbol]) {
       AI_2_tally[cardSymbol]++;
       if (AI_2_tally[cardSymbol] == 4) {
-        addFullSet(cardSymbol, "AI_2_sets");
+        addFullSet(cardSymbol, "AI_2");
       }
     } else {
       AI_2_tally[cardSymbol] = 1;
     }
-    remaining = remaining.filter((card) => card != randomCard);
+    remaining = remaining.filter((card: Card) => card != randomCard);
 
     //AI 3
     randomCard = getRandomCard(remaining);
@@ -105,12 +110,12 @@ const dealCards = () => {
     if (AI_3_tally[cardSymbol]) {
       AI_3_tally[cardSymbol]++;
       if (AI_3_tally[cardSymbol] == 4) {
-        addFullSet(cardSymbol, "AI_3_sets");
+        addFullSet(cardSymbol, "AI_3");
       }
     } else {
       AI_3_tally[cardSymbol] = 1;
     }
-    remaining = remaining.filter((card) => card != randomCard);
+    remaining = remaining.filter((card: Card) => card != randomCard);
   }
 
   initialState.set("P_1", P1cards);
@@ -145,28 +150,30 @@ const getRandomInteger = (min, max) => {
   return Math.floor(Math.random() * (max - min + 1) + min);
 };
 
-const getRandomCard = (deck) => {
+const getRandomCard = (deck: Card[]): Card => {
   return deck[getRandomInteger(0, deck.length - 1)];
 };
 
-const addFullSet = (state, setSymbol, asker) => {
+const addFullSet = (setSymbol: string, asker: string, state?) => {
+  // console.log(`@cardReducer: setSymbol=${setSymbol}, asker=${asker}, state=${state}`)
   let set = state.get(`${asker}_sets`);
   set.push(setSymbol);
   state.set(`${asker}_sets`, set);
 
-  let playerCards = state.get(asker);
+  let playerCards: Card[] = state.get(asker);
   playerCards = playerCards.filter((card) => card.symbol != setSymbol);
 
   state.set(asker, playerCards);
 
-  console.log("A player has a full set!");
+  // console.log("A player has a full set!");
 };
 
-const sendCards = (state, asker, beingAsked, matchingCards) => {
+const sendCards = (asker: string, beingAsked: string, matchingCards: Card[], state?) => {
+  // console.log(`@cardReducer Asker=${asker} , BeingAsked=${beingAsked}, Matching=${JSON.stringify(matchingCards)}, State=${state}`)
   let newState = _.cloneDeep(state);
 
-  let askerCards = newState.get(asker);
-  let beingAskedCards = newState.get(beingAsked);
+  let askerCards: Card[] = newState.get(asker);
+  let beingAskedCards: Card[] = newState.get(beingAsked);
 
   matchingCards.forEach((card) => {
     askerCards.push(card);
@@ -180,20 +187,20 @@ const sendCards = (state, asker, beingAsked, matchingCards) => {
   newState.set(asker, askerCards);
   newState.set(beingAsked, beingAskedCards);
 
-  if (beingAsked == "P_1")
-    console.warn("beingAsked -- P1 -- cards are ", beingAskedCards);
+  // if (beingAsked == "P_1")
+  // console.warn("beingAsked -- P1 -- cards are ", beingAskedCards);
 
   return newState;
 };
 
-const goFish = (state, asker) => {
+const goFish = (state, asker: string) => {
   let newState = _.cloneDeep(state);
 
-  let askerCards = newState.get(asker);
-  let remainingDeck = newState.get("remainingDeck");
+  let askerCards: Card[] = newState.get(asker);
+  let remainingDeck: Card[] = newState.get("remainingDeck");
 
-  let randomCard = getRandomCard(remainingDeck);
-  console.log("New card from deck is ", randomCard);
+  let randomCard: Card = getRandomCard(remainingDeck);
+  // console.log("New card from deck is ", randomCard);
   askerCards.push(randomCard);
 
   remainingDeck = remainingDeck.filter((card) => card != randomCard);
@@ -211,11 +218,17 @@ dealCards();
 const cardReducer = (state = initialState, action) => {
   switch (action.type) {
     case SEND_CARDS: {
-      let asker = action.asker;
-      let beingAsked = action.beingAsked;
+      let asker: string = action.asker;
+      // console.log("Asker ", asker)
+      let beingAsked: string = action.beingAsked;
+      // console.log("Being asked ", beingAsked)
 
-      let matchingCards = action.matchingCards;
-      let newState = sendCards(state, asker, beingAsked, matchingCards);
+      let matchingCards: Card[] = action.matchingCards;
+      // console.log("Matching cards ", matchingCards)
+      // console.log("State before is", state)
+
+      let newState = sendCards(asker, beingAsked, matchingCards, state);
+      // console.log("Next new state ", newState)
 
       let askerTally = newState.get(`${asker}_tally`);
       let beingAskedTally = newState.get(`${beingAsked}_tally`);
@@ -224,7 +237,7 @@ const cardReducer = (state = initialState, action) => {
         if (askerTally[card.symbol]) {
           askerTally[card.symbol]++;
           if (askerTally[card.symbol] == 4) {
-            addFullSet(newState, card.symbol, asker);
+            addFullSet(card.symbol, asker, newState);
           }
         } else {
           askerTally[card.symbol] = 1;
@@ -245,7 +258,7 @@ const cardReducer = (state = initialState, action) => {
       if (askerTally[randomCard.symbol]) {
         askerTally[randomCard.symbol]++;
         if (askerTally[randomCard.symbol] == 4) {
-          addFullSet(newState, randomCard.symbol, asker);
+          addFullSet(randomCard.symbol, asker, newState);
         }
       } else {
         askerTally[randomCard.symbol] = 1;

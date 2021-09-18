@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
-import './App.css'
+import '../css/App.css'
 import { createStore }from 'redux'
 import { Provider } from 'react-redux'
-import cardReducer from './reducers/cardReducer'
+import cardReducer from '../reducers/cardReducer'
 import ConnectedComponent from './ConnectedComponent'
 
 

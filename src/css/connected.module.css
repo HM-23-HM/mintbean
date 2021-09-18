@@ -91,9 +91,17 @@ html {
     padding: 20px;
 }
 
+
 .nextPlayerButton {
     background-color: #F76A6A;
     border: 1px solid #F76A6A;
     border-radius: 5px ;
     color: #fff;
 }
+
+.nextPlayerButton:disabled {
+    background-color: #808080;
+    border: 1px solid #808080;
+
+}
+

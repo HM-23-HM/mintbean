@@ -1,7 +1,13 @@
 import React from "react";
 import { connect } from "react-redux";
-import { sendCards, goFish } from "./actions/actions";
-import styles from "./css/options.module.css";
+import { sendCards, goFish } from "../actions/actions";
+import styles from "../css/options.module.css";
+
+type Card = {
+  suite: string,
+  symbol: string,
+}
+
 
 const mapStateToProps = (state) => ({
   playerOneCards: state.get("P_1"),
@@ -23,27 +29,26 @@ const Options = (props) => {
   mapAItoCards.set("AI_2", props.AI_2_cards);
   mapAItoCards.set("AI_3", props.AI_3_cards);
 
-  let options = props.options;
+  let options: string[] = props.options;
 
-  const P1_ask = (selectedOption) => {
-    console.log(
-      `Selected the following option: ${selectedOption} to ask ${props.beingAsked}`
-    );
+  const P1_ask = (selectedOption: string) => {
+    // console.log(
+    //   `Selected the following option: ${selectedOption} to ask ${props.beingAsked}`
+    // );
     let option = selectedOption;
     let asker = "P_1";
-    let being_Asked = props.beingAsked;
+    let being_Asked: string = props.beingAsked;
 
-    let beingAsked_Cards = mapAItoCards.get(being_Asked);
-    let matchingCards = beingAsked_Cards.filter(
+    let beingAsked_Cards: Card[] = mapAItoCards.get(being_Asked);
+    let matchingCards: Card[] = beingAsked_Cards.filter(
       (card) => card.symbol == option
     );
-    console.log("Matching cards ", matchingCards);
 
     if (matchingCards.length > 0) {
-      console.log("A matching card was found!");
+      // console.log("A matching card was found!");
       props.dispatchSendCards(asker, being_Asked, matchingCards);
     } else {
-      console.log("No matching card. Go Fish!");
+      // console.log("No matching card. Go Fish!");
       props.dispatchGoFish(asker);
     }
   };
@@ -52,7 +57,13 @@ const Options = (props) => {
     <div className={styles.optionsContainer}>
       {options.map((option) => (
         <button
-          onClick={() => P1_ask(option)}
+          onClick={() => {
+            // console.log("Option is ", option)
+
+            P1_ask(option)
+          
+          }
+          }
           key={option}
           className={styles.option}
         >

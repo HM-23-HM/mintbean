@@ -2,7 +2,12 @@ export const SEND_CARDS = 'SEND_CARDS'
 export const GO_FISH = 'GO_FISH'
 export const MY_TURN = 'MY_TURN'
 
-export function sendCards(asker, beingAsked, matchingCards){
+type Card = {
+    suite: string,
+    symbol: string,
+}
+
+export function sendCards(asker: string, beingAsked: string, matchingCards: Card[]){
     return {
         type: SEND_CARDS,
         asker,

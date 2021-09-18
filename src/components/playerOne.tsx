@@ -1,7 +1,12 @@
 import React from "react";
 import Card from "./card";
-import styles from "./css/cards.module.css";
+import styles from "../css/cards.module.css";
 import { connect } from "react-redux";
+
+type Card = {
+  suite: string,
+  symbol: string,
+}
 
 const mapStateToProps = (state) => ({
   P_1_sets: state.get("P_1_sets"),
@@ -13,7 +18,7 @@ const PlayerOne = (props) => {
     <div>
       <span>
         {props.cards &&
-          props.cards.map((card) => (
+          props.cards.map((card: Card) => (
             <Card
               key={card.suite + card.symbol}
               suite={card.suite}

@@ -1,12 +1,12 @@
 import React from "react";
-import hearts from './img/hearts.png'
-import spades from './img/spades.jpg'
-import clubs from './img/clubs.png'
-import diamonds from './img/diamonds.png'
-import styles from './css/cards.module.css'
+import hearts from '../img/hearts.png'
+import spades from '../img/spades.jpg'
+import clubs from '../img/clubs.png'
+import diamonds from '../img/diamonds.png'
+import styles from '../css/cards.module.css'
 
 
-const Card = ({suite, symbol}) => {
+const Card = ({suite, symbol, className}) => {
 
 const suites = new Map()
 
@@ -15,7 +15,7 @@ suites.set('Clubs',clubs)
 suites.set('Spades',spades)
 suites.set('Diamonds',diamonds)
 
-    const pickSuite = (suite) => {
+    const pickSuite = (suite: string) => {
         return suites.get(suite)
     }
 
