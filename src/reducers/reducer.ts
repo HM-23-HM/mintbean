@@ -1,4 +1,4 @@
-import { SEND_CARDS, GO_FISH, MY_TURN } from "../actions/actions";
+import { SEND_CARDS, GO_FISH, MY_TURN, SET_PLAYER_BEING_ASKED, SET_OPTION_ASKED, SET_WHOSE_TURN } from "../actions/actions";
 import _ from "lodash";
 
 let initialState = new Map();
@@ -6,19 +6,22 @@ initialState.set("P_1", [""]);
 initialState.set("AI_1", []);
 initialState.set("AI_2", []);
 initialState.set("AI_3", []);
+
 initialState.set("remainingDeck", [""]);
+
 initialState.set("P_1_tally", {});
 initialState.set("AI_1_tally", {});
 initialState.set("AI_2_tally", {});
 initialState.set("AI_3_tally", {});
+
 initialState.set("P_1_sets", [""]);
 initialState.set("AI_1_sets", []);
 initialState.set("AI_2_sets", []);
 initialState.set("AI_3_sets", []);
-initialState.set("P_1_turn", true);
-initialState.set("AI_1_turn", false);
-initialState.set("AI_2_turn", false);
-initialState.set("AI_3_turn", false);
+
+initialState.set("playerBeingAsked", "")
+initialState.set("optionAsked", "")
+initialState.set("whoseTurn", "P_1")
 
 const suites = ["Hearts", "Clubs", "Diamonds", "Spades"];
 const symbols = [
@@ -155,7 +158,6 @@ const getRandomCard = (deck: Card[]): Card => {
 };
 
 const addFullSet = (setSymbol: string, asker: string, state?) => {
-  // console.log(`@cardReducer: setSymbol=${setSymbol}, asker=${asker}, state=${state}`)
   let set = state.get(`${asker}_sets`);
   set.push(setSymbol);
   state.set(`${asker}_sets`, set);
@@ -169,7 +171,6 @@ const addFullSet = (setSymbol: string, asker: string, state?) => {
 };
 
 const sendCards = (asker: string, beingAsked: string, matchingCards: Card[], state?) => {
-  // console.log(`@cardReducer Asker=${asker} , BeingAsked=${beingAsked}, Matching=${JSON.stringify(matchingCards)}, State=${state}`)
   let newState = _.cloneDeep(state);
 
   let askerCards: Card[] = newState.get(asker);
@@ -187,9 +188,6 @@ const sendCards = (asker: string, beingAsked: string, matchingCards: Card[], sta
   newState.set(asker, askerCards);
   newState.set(beingAsked, beingAskedCards);
 
-  // if (beingAsked == "P_1")
-  // console.warn("beingAsked -- P1 -- cards are ", beingAskedCards);
-
   return newState;
 };
 
@@ -200,12 +198,13 @@ const goFish = (state, asker: string) => {
   let remainingDeck: Card[] = newState.get("remainingDeck");
 
   let randomCard: Card = getRandomCard(remainingDeck);
-  // console.log("New card from deck is ", randomCard);
   askerCards.push(randomCard);
 
   remainingDeck = remainingDeck.filter((card) => card != randomCard);
+  let newRemainingDeck = _.cloneDeep(remainingDeck)
+  console.log("Length of new rem Deck is ", newRemainingDeck.length)
 
-  newState.set("remainingDeck", remainingDeck);
+  newState.set("remainingDeck", newRemainingDeck);
   newState.set(asker, askerCards);
 
   return { newState, randomCard };
@@ -219,16 +218,11 @@ const cardReducer = (state = initialState, action) => {
   switch (action.type) {
     case SEND_CARDS: {
       let asker: string = action.asker;
-      // console.log("Asker ", asker)
       let beingAsked: string = action.beingAsked;
-      // console.log("Being asked ", beingAsked)
 
       let matchingCards: Card[] = action.matchingCards;
-      // console.log("Matching cards ", matchingCards)
-      // console.log("State before is", state)
 
       let newState = sendCards(asker, beingAsked, matchingCards, state);
-      // console.log("Next new state ", newState)
 
       let askerTally = newState.get(`${asker}_tally`);
       let beingAskedTally = newState.get(`${beingAsked}_tally`);
@@ -267,20 +261,27 @@ const cardReducer = (state = initialState, action) => {
       return newState;
     }
 
-    case MY_TURN: {
-      let myTurn = action.thisPlayersTurn;
-      let not1 = action.not1;
-      let not2 = action.not2;
-      let not3 = action.not3;
+    case SET_WHOSE_TURN: {
       let newState = _.cloneDeep(state);
+      newState.set("whoseTurn", action.player)
 
-      newState.set(myTurn, true);
-      newState.set(not1, false);
-      newState.set(not2, false);
-      newState.set(not3, false);
+      return newState
 
-      return newState;
     }
+
+
+    case SET_PLAYER_BEING_ASKED: {
+      let newState = _.cloneDeep(state);
+      newState.set("playerBeingAsked", action.beingAsked)
+
+      return newState
+    }
+
+    case SET_OPTION_ASKED: 
+      let newState = _.cloneDeep(state)
+      newState.set("optionAsked", action.option)
+
+      return newState
 
     default:
       return state;

@@ -32,24 +32,24 @@ const Options = (props) => {
   let options: string[] = props.options;
 
   const P1_ask = (selectedOption: string) => {
-    // console.log(
-    //   `Selected the following option: ${selectedOption} to ask ${props.beingAsked}`
-    // );
-    let option = selectedOption;
-    let asker = "P_1";
-    let being_Asked: string = props.beingAsked;
+    if (props.whoseTurn == "P_1") {
 
-    let beingAsked_Cards: Card[] = mapAItoCards.get(being_Asked);
-    let matchingCards: Card[] = beingAsked_Cards.filter(
-      (card) => card.symbol == option
-    );
+      let option = selectedOption;
+      let asker = "P_1";
+      let being_Asked: string = props.beingAsked;
 
-    if (matchingCards.length > 0) {
-      // console.log("A matching card was found!");
-      props.dispatchSendCards(asker, being_Asked, matchingCards);
-    } else {
-      // console.log("No matching card. Go Fish!");
-      props.dispatchGoFish(asker);
+      let beingAsked_Cards: Card[] = mapAItoCards.get(being_Asked);
+      let matchingCards: Card[] = beingAsked_Cards.filter(
+        (card) => card.symbol == option
+      );
+
+      if (matchingCards.length > 0) {
+        // console.log("A matching card was found!");
+        props.dispatchSendCards(asker, being_Asked, matchingCards);
+      } else {
+        // console.log("No matching card. Go Fish!");
+        props.dispatchGoFish(asker);
+      }
     }
   };
 
@@ -57,15 +57,10 @@ const Options = (props) => {
     <div className={styles.optionsContainer}>
       {options.map((option) => (
         <button
-          onClick={() => {
-            // console.log("Option is ", option)
-
-            P1_ask(option)
-          
-          }
-          }
+          onClick={() => P1_ask(option)}
           key={option}
           className={styles.option}
+          disabled={!props.P_1_turn}
         >
           {option}
         </button>

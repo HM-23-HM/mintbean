@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import '../css/App.css'
 import { createStore }from 'redux'
 import { Provider } from 'react-redux'
-import cardReducer from '../reducers/cardReducer'
+import cardReducer from '../reducers/reducer'
 import ConnectedComponent from './ConnectedComponent'
 
 

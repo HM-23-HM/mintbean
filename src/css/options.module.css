@@ -16,3 +16,8 @@
         background-color: #FF8080;
         color: #fff;
 }
+
+.option:disabled {
+        background-color: #808080;
+        border: 1px solid #808080;
+}
