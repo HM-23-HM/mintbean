@@ -24,14 +24,16 @@ const mapStateToProps = (state) => ({
 
   whoseTurn: state.get("whoseTurn"),
   beingAsked: state.get("playerBeingAsked"),
-  optionAsked: state.get("optionAsked")
+  optionAsked: state.get("optionAsked"),
+
+  response: state.get("response")
 
 });
 
 const mapDispatchToProps = {
   dispatchSendCards: (asker: string, being_Asked: string, matchingCards: Card[]) => sendCards(asker, being_Asked, matchingCards),
   dispatchGoFish: (asker: string) => goFish(asker),
-  dispatchSetPlayerBeingAsked: (playerBeingAsked: string) => setPlayerBeingAsked(playerBeingAsked),
+  // dispatchSetPlayerBeingAsked: (playerBeingAsked: string) => setPlayerBeingAsked(playerBeingAsked),
   dispatchSetOptionAsked: (optionAsked: string) => setOptionAsked(optionAsked)
 
 };
@@ -86,7 +88,6 @@ const AI_player = (props) => {
   mapIDtoStateProps.set("AI_2_sets", props.AI_2_sets);
   mapIDtoStateProps.set("AI_3_sets", props.AI_3_sets);
 
-  // const [response, setResponse] = useState<String>("No matching card. Go Fish!")
   const [isResponseVisible, setResponseVisibility] = useState(false)
   const [isQuestionVisible, setQuestionVisibility] = useState(false)
 
@@ -117,8 +118,6 @@ const AI_player = (props) => {
       let beingAskedCards: Card[] = mapIDtoStateProps.get(props.beingAsked);
       let matchingCards: Card[] = beingAskedCards.filter((card) => card.symbol == props.optionAsked);
 
-      console.log("props.optionAsked is ", props.optionAsked)
-      console.log("Matching cards", matchingCards)
 
       if (matchingCards.length > 0) {
         //"A matching card was found!"
@@ -128,7 +127,6 @@ const AI_player = (props) => {
       } else {
         //"No matching card. Go Fish!"
         console.log("Go Fish triggered")
-        // response = "No matching card. Go Fish!";
         props.dispatchGoFish(props.whoseTurn);
         revealResponse(setResponseVisibility)
       }

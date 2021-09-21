@@ -6,7 +6,7 @@ import Deck from "./deck";
 import PlayerOne from "./playerOne";
 import Options from "./options";
 import styles from "../css/connected.module.css";
-import { myTurn, setPlayerBeingAsked, setWhoseTurn, setOptionAsked } from "../actions/actions";
+import { setPlayerBeingAsked, setWhoseTurn, setOptionAsked, setResponse } from "../actions/actions";
 
 import spongebob from '../img/spongebob.jpg'
 import nemo from '../img/nemo.jpg'
@@ -19,7 +19,7 @@ type Card = {
 }
 
 const mapStateToProps = (state) => ({
-  playerOneCards: state.get("P_1"),
+  P_1_cards: state.get("P_1"),
   AI_1_cards: state.get("AI_1"),
   AI_2_cards: state.get("AI_2"),
   AI_3_cards: state.get("AI_3"),
@@ -28,13 +28,17 @@ const mapStateToProps = (state) => ({
   remDeck: state.get("remainingDeck").length,
 
   whoseTurn: state.get("whoseTurn"),
-  beingAsked: state.get("playerBeingAsked")
+  beingAsked: state.get("playerBeingAsked"),
+  optionAsked: state.get("optionAsked"),
+
+  response: state.get("response")
 });
 
 const mapDispatchToProps = {
   dispatchSetPlayerBeingAsked: (playerBeingAsked: string) => setPlayerBeingAsked(playerBeingAsked),
   dispatchSetWhoseTurn: (player: string) => setWhoseTurn(player),
-  dispatchSetOptionAsked: (option: string) => setOptionAsked(option)
+  dispatchSetOptionAsked: (option: string) => setOptionAsked(option),
+  dispatchSetResponse: (response: string) => setResponse(response)
 
 };
 
@@ -44,8 +48,6 @@ var index = 0;
 
 const ConnectedComponent = (props) => {
 
-  const [response, setResponse] = useState("")
-
 
   const mapIDtoStateProps = new Map();
   mapIDtoStateProps.set("P_1", props.P_1_cards);
@@ -54,14 +56,13 @@ const ConnectedComponent = (props) => {
   mapIDtoStateProps.set("AI_3", props.AI_3_cards);
 
 
-
   let players = ["P_1", "AI_1", "AI_2", "AI_3"];
 
-  const nextPlayersTurn = () => {
+  const nextTurn = () => {
     index++
     if (index == 4) {
       index = 0
-      props.dispatchSetPlayerBeingAsked("")
+      props.dispatchSetPlayerBeingAsked("P_1")
     }
 
     props.dispatchSetWhoseTurn(players[index])
@@ -70,27 +71,31 @@ const ConnectedComponent = (props) => {
       props.dispatchSetPlayerBeingAsked(getAIsPlayerToAsk(players[index]))
     }
 
-    if (props.whoseTurn != 'P_1'){
+    if (props.whoseTurn != 'P_1') {
       var option = getOptionForAItoAsk(props.whoseTurn)
       props.dispatchSetOptionAsked(option)
     }
 
-    let beingAskedCards: Card[] = mapIDtoStateProps.get(props.beingAsked);
-    let matchingCards: Card[] = beingAskedCards.filter((card) => card.symbol == props.optionAsked);
-
-    if (matchingCards.length > 0) {
-      //"A matching card was found!"
-      setResponse('Matching card found')
-    } else {
-      //"No matching card. Go Fish!"
-      setResponse('Go Fish')
-    }
 
   }
 
+  useEffect(() => {
+
+    let beingAskedCards: Card[] = mapIDtoStateProps.get(props.beingAsked);
+    let matchingCards: Card[] = beingAskedCards.filter((card) => card.symbol == props.optionAsked);
+
+
+    if (matchingCards.length > 0) {
+      props.dispatchSetResponse('Matching card found')
+    } else {
+      props.dispatchSetResponse('Go Fish')
+    }
+  }, [props.whoseTurn])
+
+
   let playerOneOptions: string[] = [];
-  if (props.playerOneCards) {
-    props.playerOneCards.forEach((card) => {
+  if (props.P_1_cards) {
+    props.P_1_cards.forEach((card) => {
       let option: string = card.symbol;
       if (!playerOneOptions.includes(option)) {
         playerOneOptions.push(option);
@@ -129,7 +134,6 @@ const ConnectedComponent = (props) => {
 
   const getOptionForAItoAsk = (whoseTurn: string) => {
     const option = getRandomOption(mapIDtoStateProps.get(`${whoseTurn}`))
-    console.log("Option set is ", option)
 
     return option
   }
@@ -155,7 +159,6 @@ const ConnectedComponent = (props) => {
               myTurn={props.whoseTurn == "AI_1"}
               className="AI_container"
               picture={spongebob}
-              response={response}
             />
           </button>
         </div>
@@ -174,7 +177,6 @@ const ConnectedComponent = (props) => {
               asked={props.beingAsked == "AI_2" ? true : false}
               myTurn={props.whoseTurn == "AI_2"}
               picture={nemo}
-              response={response}
             />
           </button>
         </div>
@@ -192,7 +194,6 @@ const ConnectedComponent = (props) => {
               asked={props.beingAsked == "AI_3" ? true : false}
               myTurn={props.whoseTurn == "AI_3"}
               picture={ariel}
-              response={response}
             />
           </button>
         </div>
@@ -222,7 +223,7 @@ const ConnectedComponent = (props) => {
             </p>
           </div>
           <div
-            onClick={() => nextPlayersTurn()}
+            onClick={() => nextTurn()}
             className={styles.optionsContainer}
           >
             {props.whoseTurn == 'P_1' && (
@@ -233,7 +234,7 @@ const ConnectedComponent = (props) => {
             {props.remDeck > 0 ? (
               <button
                 className={styles.nextPlayerButton}
-                onClick={() => nextPlayersTurn()}
+                onClick={() => nextTurn()}
                 disabled={props.whoseTurn == "P_1"}
               >
                 Next Player's Turn

@@ -1,7 +1,8 @@
-import { SEND_CARDS, GO_FISH, MY_TURN, SET_PLAYER_BEING_ASKED, SET_OPTION_ASKED, SET_WHOSE_TURN } from "../actions/actions";
+import { SEND_CARDS, GO_FISH, SET_PLAYER_BEING_ASKED, SET_OPTION_ASKED, SET_WHOSE_TURN, SET_RESPONSE } from "../actions/actions";
 import _ from "lodash";
 
 let initialState = new Map();
+
 initialState.set("P_1", [""]);
 initialState.set("AI_1", []);
 initialState.set("AI_2", []);
@@ -19,9 +20,11 @@ initialState.set("AI_1_sets", []);
 initialState.set("AI_2_sets", []);
 initialState.set("AI_3_sets", []);
 
-initialState.set("playerBeingAsked", "")
+initialState.set("playerBeingAsked", "P_1")
 initialState.set("optionAsked", "")
 initialState.set("whoseTurn", "P_1")
+initialState.set("response", "No luck, go fish")
+
 
 const suites = ["Hearts", "Clubs", "Diamonds", "Spades"];
 const symbols = [
@@ -202,7 +205,6 @@ const goFish = (state, asker: string) => {
 
   remainingDeck = remainingDeck.filter((card) => card != randomCard);
   let newRemainingDeck = _.cloneDeep(remainingDeck)
-  console.log("Length of new rem Deck is ", newRemainingDeck.length)
 
   newState.set("remainingDeck", newRemainingDeck);
   newState.set(asker, askerCards);
@@ -277,11 +279,19 @@ const cardReducer = (state = initialState, action) => {
       return newState
     }
 
-    case SET_OPTION_ASKED: 
+    case SET_OPTION_ASKED: {
       let newState = _.cloneDeep(state)
       newState.set("optionAsked", action.option)
 
       return newState
+    }
+
+    case SET_RESPONSE: {
+      let newState = _.cloneDeep(state)
+      newState.set("response", action.response)
+
+      return newState
+    }
 
     default:
       return state;

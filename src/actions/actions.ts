@@ -4,6 +4,7 @@ export const MY_TURN = 'MY_TURN'
 export const SET_PLAYER_BEING_ASKED = 'SET_PLAYER_BEING_ASKED'
 export const SET_OPTION_ASKED = 'SET_OPTION_ASKED'
 export const SET_WHOSE_TURN = 'SET_WHOSE_TURN'
+export const SET_RESPONSE = 'SET_RESPONSE'
 
 type Card = {
     suite: string,
@@ -54,5 +55,12 @@ export function setWhoseTurn(player: string){
     return {
         type: SET_WHOSE_TURN,
         player
+    }
+}
+
+export function setResponse(response: string){
+    return {
+        type: SET_RESPONSE,
+        response
     }
 }
