@@ -1,11 +1,10 @@
 .cardContainer {
-    border: 1px solid red;
     height: 80px;
     width: 60px;
-    padding: 10px;
     margin: 10px;
     display: inline-block;
     border-radius: 10px;
+    background-color: white;
 }
 
 .innerCard{

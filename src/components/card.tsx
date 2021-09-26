@@ -3,7 +3,7 @@ import hearts from '../img/hearts.png'
 import spades from '../img/spades.jpg'
 import clubs from '../img/clubs.png'
 import diamonds from '../img/diamonds.png'
-import styles from '../css/cards.module.css'
+import styles from '../css/card.module.css'
 
 
 const Card = ({suite, symbol, className}) => {

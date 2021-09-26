@@ -4,26 +4,26 @@ import _ from "lodash";
 let initialState = new Map();
 
 initialState.set("P_1", [""]);
-initialState.set("AI_1", []);
-initialState.set("AI_2", []);
-initialState.set("AI_3", []);
+initialState.set("Spongebob", []);
+initialState.set("Squidward", []);
+initialState.set("Patrick", []);
 
 initialState.set("remainingDeck", [""]);
 
 initialState.set("P_1_tally", {});
-initialState.set("AI_1_tally", {});
-initialState.set("AI_2_tally", {});
-initialState.set("AI_3_tally", {});
+initialState.set("Spongebob_tally", {});
+initialState.set("Squidward_tally", {});
+initialState.set("Patrick_tally", {});
 
-initialState.set("P_1_sets", [""]);
-initialState.set("AI_1_sets", []);
-initialState.set("AI_2_sets", []);
-initialState.set("AI_3_sets", []);
+initialState.set("P_1_sets", []);
+initialState.set("Spongebob_sets", []);
+initialState.set("Squidward_sets", []);
+initialState.set("Patrick_sets", []);
 
 initialState.set("playerBeingAsked", "P_1")
 initialState.set("optionAsked", "")
 initialState.set("whoseTurn", "P_1")
-initialState.set("response", "No luck, go fish")
+initialState.set("response", "")
 
 
 const suites = ["Hearts", "Clubs", "Diamonds", "Spades"];
@@ -60,9 +60,9 @@ const dealCards = () => {
   let AI3cards: Card[] = [];
 
   let P1_tally = {};
-  let AI_1_tally = {};
-  let AI_2_tally = {};
-  let AI_3_tally = {};
+  let Spongebob_tally = {};
+  let Squidward_tally = {};
+  let Patrick_tally = {};
 
   for (let i = 0; i < 5; i++) {
     //P1
@@ -84,13 +84,13 @@ const dealCards = () => {
     randomCard = getRandomCard(remaining);
     AI1cards.push(randomCard);
     cardSymbol = randomCard.symbol;
-    if (AI_1_tally[cardSymbol]) {
-      AI_1_tally[cardSymbol]++;
-      if (AI_1_tally[cardSymbol] == 4) {
-        addFullSet(cardSymbol, "AI_1");
+    if (Spongebob_tally[cardSymbol]) {
+      Spongebob_tally[cardSymbol]++;
+      if (Spongebob_tally[cardSymbol] == 4) {
+        addFullSet(cardSymbol, "Spongebob");
       }
     } else {
-      AI_1_tally[cardSymbol] = 1;
+      Spongebob_tally[cardSymbol] = 1;
     }
 
     remaining = remaining.filter((card: Card) => card != randomCard);
@@ -99,13 +99,13 @@ const dealCards = () => {
     randomCard = getRandomCard(remaining);
     AI2cards.push(randomCard);
     cardSymbol = randomCard.symbol;
-    if (AI_2_tally[cardSymbol]) {
-      AI_2_tally[cardSymbol]++;
-      if (AI_2_tally[cardSymbol] == 4) {
-        addFullSet(cardSymbol, "AI_2");
+    if (Squidward_tally[cardSymbol]) {
+      Squidward_tally[cardSymbol]++;
+      if (Squidward_tally[cardSymbol] == 4) {
+        addFullSet(cardSymbol, "Squidward");
       }
     } else {
-      AI_2_tally[cardSymbol] = 1;
+      Squidward_tally[cardSymbol] = 1;
     }
     remaining = remaining.filter((card: Card) => card != randomCard);
 
@@ -113,27 +113,27 @@ const dealCards = () => {
     randomCard = getRandomCard(remaining);
     AI3cards.push(randomCard);
     cardSymbol = randomCard.symbol;
-    if (AI_3_tally[cardSymbol]) {
-      AI_3_tally[cardSymbol]++;
-      if (AI_3_tally[cardSymbol] == 4) {
-        addFullSet(cardSymbol, "AI_3");
+    if (Patrick_tally[cardSymbol]) {
+      Patrick_tally[cardSymbol]++;
+      if (Patrick_tally[cardSymbol] == 4) {
+        addFullSet(cardSymbol, "Patrick");
       }
     } else {
-      AI_3_tally[cardSymbol] = 1;
+      Patrick_tally[cardSymbol] = 1;
     }
     remaining = remaining.filter((card: Card) => card != randomCard);
   }
 
   initialState.set("P_1", P1cards);
-  initialState.set("AI_1", AI1cards);
-  initialState.set("AI_2", AI2cards);
-  initialState.set("AI_3", AI3cards);
+  initialState.set("Spongebob", AI1cards);
+  initialState.set("Squidward", AI2cards);
+  initialState.set("Patrick", AI3cards);
   initialState.set("remainingDeck", remaining);
 
   initialState.set("P_1_tally", P1_tally);
-  initialState.set("AI_1_tally", AI_1_tally);
-  initialState.set("AI_2_tally", AI_2_tally);
-  initialState.set("AI_3_tally", AI_3_tally);
+  initialState.set("Spongebob_tally", Spongebob_tally);
+  initialState.set("Squidward_tally", Squidward_tally);
+  initialState.set("Patrick_tally", Patrick_tally);
 
   return initialState;
 };
@@ -170,7 +170,6 @@ const addFullSet = (setSymbol: string, asker: string, state?) => {
 
   state.set(asker, playerCards);
 
-  // console.log("A player has a full set!");
 };
 
 const sendCards = (asker: string, beingAsked: string, matchingCards: Card[], state?) => {

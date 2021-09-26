@@ -22,7 +22,6 @@ export default App
 const styles = {
   P1 : {},
   AI_1 : {
-    // transform: 'rotate(90deg)',
     margin: 10
   },
   AI_2 : {},

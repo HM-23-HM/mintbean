@@ -1,16 +1,18 @@
-import React, { useState, useEffect, useLayoutEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
 
 import AI_player from "./AI_player";
 import Deck from "./deck";
-import PlayerOne from "./playerOne";
+import PlayerOne from "./playerOneCards";
 import Options from "./options";
+import Help from './Help'
+
 import styles from "../css/connected.module.css";
-import { setPlayerBeingAsked, setWhoseTurn, setOptionAsked, setResponse } from "../actions/actions";
+import { setPlayerBeingAsked, setWhoseTurn, setOptionAsked, setResponse, goFish, sendCards } from "../actions/actions";
 
 import spongebob from '../img/spongebob.jpg'
-import nemo from '../img/nemo.jpg'
-import ariel from '../img/ariel.png'
+import squidward from '../img/squidward.jpg'
+import patrick from '../img/patrick2.jpg'
 
 
 type Card = {
@@ -20,9 +22,9 @@ type Card = {
 
 const mapStateToProps = (state) => ({
   P_1_cards: state.get("P_1"),
-  AI_1_cards: state.get("AI_1"),
-  AI_2_cards: state.get("AI_2"),
-  AI_3_cards: state.get("AI_3"),
+  Spongebob_cards: state.get("Spongebob"),
+  Squidward_cards: state.get("Squidward"),
+  Patrick_cards: state.get("Patrick"),
 
   P_1_sets: state.get("P_1_sets"),
   remDeck: state.get("remainingDeck").length,
@@ -38,59 +40,89 @@ const mapDispatchToProps = {
   dispatchSetPlayerBeingAsked: (playerBeingAsked: string) => setPlayerBeingAsked(playerBeingAsked),
   dispatchSetWhoseTurn: (player: string) => setWhoseTurn(player),
   dispatchSetOptionAsked: (option: string) => setOptionAsked(option),
-  dispatchSetResponse: (response: string) => setResponse(response)
+  dispatchSetResponse: (response: string) => setResponse(response),
+  dispatchGoFish: (asker: string) => goFish(asker),
+  dispatchSendCards: (asker: string, beingAsked: string, matchingCards: Card[]) => sendCards(asker, beingAsked, matchingCards)
 
 };
 
 var index = 0;
 
+const duration = 300;
 
+const transitionStyles = {
+  entering: { display: 'block' },
+  entered: { display: 'block' },
+  exiting: { display: 'block' },
+  exited: { display: 'none' },
+};
 
 const ConnectedComponent = (props) => {
+
+  const [isNextTurnButtonDisabled, setNextTurnButtonDisability] = useState(true)
 
 
   const mapIDtoStateProps = new Map();
   mapIDtoStateProps.set("P_1", props.P_1_cards);
-  mapIDtoStateProps.set("AI_1", props.AI_1_cards);
-  mapIDtoStateProps.set("AI_2", props.AI_2_cards);
-  mapIDtoStateProps.set("AI_3", props.AI_3_cards);
+  mapIDtoStateProps.set("Spongebob", props.Spongebob_cards);
+  mapIDtoStateProps.set("Squidward", props.Squidward_cards);
+  mapIDtoStateProps.set("Patrick", props.Patrick_cards);
 
 
-  let players = ["P_1", "AI_1", "AI_2", "AI_3"];
+  let players = ["P_1", "Spongebob", "Squidward", "Patrick"];
+
+  const SpongebobsTurn = () => {
+
+    setTimeout(() => setNextTurnButtonDisability(false), 6000)
+
+  }
 
   const nextTurn = () => {
+
+    setNextTurnButtonDisability(true)
+    setTimeout(() => setNextTurnButtonDisability(false), 4500)
+
+
     index++
     if (index == 4) {
       index = 0
       props.dispatchSetPlayerBeingAsked("P_1")
     }
 
+
     props.dispatchSetWhoseTurn(players[index])
 
     if (index != 0) {
       props.dispatchSetPlayerBeingAsked(getAIsPlayerToAsk(players[index]))
-    }
-
-    if (props.whoseTurn != 'P_1') {
-      var option = getOptionForAItoAsk(props.whoseTurn)
+      var option = getOptionForAItoAsk(players[index])
       props.dispatchSetOptionAsked(option)
     }
 
-
   }
 
+  // Set AI Response
   useEffect(() => {
 
-    let beingAskedCards: Card[] = mapIDtoStateProps.get(props.beingAsked);
-    let matchingCards: Card[] = beingAskedCards.filter((card) => card.symbol == props.optionAsked);
+    if (props.remDeck > 0) {
+
+      if (props.whoseTurn == "P_1" && props.beingAsked == "P_1") { } else {
 
 
-    if (matchingCards.length > 0) {
-      props.dispatchSetResponse('Matching card found')
-    } else {
-      props.dispatchSetResponse('Go Fish')
+        let beingAskedCards: Card[] = mapIDtoStateProps.get(props.beingAsked);
+        let matchingCards: Card[] = beingAskedCards.filter((card) => card.symbol == props.optionAsked);
+
+        if (matchingCards.length > 0) {
+          props.dispatchSetResponse('Darn! You got me.')
+          props.dispatchSendCards(props.whoseTurn, props.beingAsked, matchingCards);
+
+        } else {
+          props.dispatchSetResponse('Go Fish!')
+          props.dispatchGoFish(props.whoseTurn);
+
+        }
+      }
     }
-  }, [props.whoseTurn])
+  }, [props.whoseTurn, props.optionAsked])
 
 
   let playerOneOptions: string[] = [];
@@ -123,17 +155,17 @@ const ConnectedComponent = (props) => {
   };
 
   const getAIsPlayerToAsk = (id: string) => {
-    const playerIds = ["P_1", "AI_1", "AI_2", "AI_3"];
+    const playerIds = ["P_1", "Spongebob", "Squidward", "Patrick"];
     let playerOptions = playerIds.filter((option) => option != id);
 
     let randomPlayer = playerOptions[getRandomInteger(0, 2)];
-    props.dispatchSetPlayerBeingAsked(randomPlayer)
 
     return randomPlayer;
   };
 
   const getOptionForAItoAsk = (whoseTurn: string) => {
     const option = getRandomOption(mapIDtoStateProps.get(`${whoseTurn}`))
+
 
     return option
   }
@@ -142,21 +174,21 @@ const ConnectedComponent = (props) => {
 
 
   return (
-    <div>
+    <>
       <div className={styles.upperContainer}>
+        <Help />
         <div
           className={styles.artificial_1}
         >
           <button
-            onClick={() => props.dispatchSetPlayerBeingAsked("AI_1")}
+            onClick={() => props.dispatchSetPlayerBeingAsked("Spongebob")}
             disabled={!(props.whoseTurn == "P_1")}
             className={styles.AI_button}
           >
             <AI_player
-              id="AI_1"
-              cards={props.AI_1_cards}
-              asked={props.beingAsked == "AI_1" ? true : false}
-              myTurn={props.whoseTurn == "AI_1"}
+              id="Spongebob"
+              asked={props.beingAsked == "Spongebob" ? true : false}
+              myTurn={props.whoseTurn == "Spongebob"}
               className="AI_container"
               picture={spongebob}
             />
@@ -167,16 +199,15 @@ const ConnectedComponent = (props) => {
           className={styles.artificial_2}
         >
           <button
-            onClick={() => props.dispatchSetPlayerBeingAsked("AI_2")}
+            onClick={() => props.dispatchSetPlayerBeingAsked("Squidward")}
             disabled={!(props.whoseTurn == "P_1")}
             className={styles.AI_button}
           >
             <AI_player
-              id="AI_2"
-              cards={props.AI_2_cards}
-              asked={props.beingAsked == "AI_2" ? true : false}
-              myTurn={props.whoseTurn == "AI_2"}
-              picture={nemo}
+              id="Squidward"
+              asked={props.beingAsked == "Squidward" ? true : false}
+              myTurn={props.whoseTurn == "Squidward"}
+              picture={squidward}
             />
           </button>
         </div>
@@ -184,16 +215,15 @@ const ConnectedComponent = (props) => {
         <div
           className={styles.artificial_3}>
           <button
-            onClick={() => props.dispatchSetPlayerBeingAsked("AI_3")}
+            onClick={() => props.dispatchSetPlayerBeingAsked("Patrick")}
             disabled={!(props.whoseTurn == "P_1")}
             className={styles.AI_button}
           >
             <AI_player
-              id="AI_3"
-              cards={props.AI_3_cards}
-              asked={props.beingAsked == "AI_3" ? true : false}
-              myTurn={props.whoseTurn == "AI_3"}
-              picture={ariel}
+              id="Patrick"
+              asked={props.beingAsked == "Patrick" ? true : false}
+              myTurn={props.whoseTurn == "Patrick"}
+              picture={patrick}
             />
           </button>
         </div>
@@ -205,6 +235,7 @@ const ConnectedComponent = (props) => {
 
       <div className={styles.lowerContainer}>
         <div className={styles.playerOne}>
+
           <div className={styles.P_1_cards}>
             <PlayerOne
               id="P_1"
@@ -222,30 +253,35 @@ const ConnectedComponent = (props) => {
               ))}
             </p>
           </div>
+
           <div
-            onClick={() => nextTurn()}
+            onClick={() => SpongebobsTurn()}
             className={styles.optionsContainer}
           >
-            {props.whoseTurn == 'P_1' && (
-              <Options options={playerOneOptions} beingAsked={props.beingAsked} P_1_turn={props.whoseTurn == "P_1"} />
-            )}
+
+            <Options
+              options={playerOneOptions}
+              P_1_turn={props.whoseTurn == "P_1"}
+              P_1_asked={props.beingAsked == "P_1"}
+            />
+
           </div>
           <div className={styles.nextPlayerButtonContainer}>
             {props.remDeck > 0 ? (
               <button
                 className={styles.nextPlayerButton}
                 onClick={() => nextTurn()}
-                disabled={props.whoseTurn == "P_1"}
+                disabled={isNextTurnButtonDisabled}
               >
-                Next Player's Turn
+                Next Turn
               </button>
             ) : (
-              <p>{`Game Over!`}</p>
+              <p className={styles.gameOver}>{`Game Over!`}</p>
             )}
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

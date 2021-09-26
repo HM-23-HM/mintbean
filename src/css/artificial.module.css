@@ -3,7 +3,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 8px;
+  box-sizing: border-box;
 }
 
 .imgContainer {
@@ -11,9 +11,11 @@
   border-color: black;
 }
 
-.symbol {
-  height: 100px;
-  width: 100px;
+.avatar {
+  height: 80px;
+  width: 80px;
+  border-radius: 40px;
+  position: fixed;
   z-index: 1;
 }
 
@@ -27,6 +29,36 @@
 h4 {
   margin: 0px;
   color: #23a8a8;
+  padding-top: 5px;
+  z-index: 2;
 }
 
+.responses {
+  z-index: 2;
+  position: fixed;
+
+}
+
+.responseText {
+  font-size: 14px;
+  background-color: white;
+  color: black;
+  padding: 5px;
+  border-radius: 5px;
+
+}
+
+.highlight {
+  border-width: 2px;
+  border-color: yellow;
+}
+
+@media only screen and (min-width: 320px) {
+  .container {
+    height: 90px;
+    width: 90px;
+    border-radius: 45px;
+
+  }
+}
 

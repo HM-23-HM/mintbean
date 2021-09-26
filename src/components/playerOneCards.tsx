@@ -1,7 +1,10 @@
 import React from "react";
 import Card from "./card";
-import styles from "../css/cards.module.css";
+import styles from "../css/playerOne.module.css";
 import { connect } from "react-redux";
+
+import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
+import { Carousel } from 'react-responsive-carousel';
 
 type Card = {
   suite: string,
@@ -13,10 +16,16 @@ const mapStateToProps = (state) => ({
   cards: state.get("P_1"),
 });
 
+
 const PlayerOne = (props) => {
+
+
   return (
-    <div>
-      <span>
+    <>
+      <Carousel
+        showArrows={true}
+        autoPlay={false}
+      >
         {props.cards &&
           props.cards.map((card: Card) => (
             <Card
@@ -26,8 +35,8 @@ const PlayerOne = (props) => {
               className={styles.playerOneDeck}
             />
           ))}
-      </span>
-    </div>
+      </Carousel>
+    </>
   );
 };
 

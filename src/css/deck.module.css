@@ -1,8 +1,7 @@
 .deckImg {
     height: 80px;
     width: 80px;
-    /* justify-self: center;
-    align-self: center; */
+
 }
 
 .deckImgContainer {
@@ -12,6 +11,7 @@
     justify-items: center;
 }
 
-p {
-    color: #82ABAB;
+.deckText {
+    color: white;
+    text-align: center
 }

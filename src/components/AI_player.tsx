@@ -1,49 +1,31 @@
 import React, { useEffect, useState } from "react";
-import symbol from "../img/AI_cards.jpg";
 import styles from "../css/artificial.module.css";
 import { connect } from "react-redux";
-import { goFish, sendCards, setPlayerBeingAsked, setOptionAsked } from "../actions/actions";
 
 import { Transition } from 'react-transition-group'
 
-type Card = {
-  suite: string,
-  symbol: string,
-}
 
 const mapStateToProps = (state) => ({
   P_1_cards: state.get("P_1"),
-  AI_1_cards: state.get("AI_1"),
-  AI_2_cards: state.get("AI_2"),
-  AI_3_cards: state.get("AI_3"),
+  Spongebob_cards: state.get("Spongebob"),
+  Squidward_cards: state.get("Squidward"),
+  Patrick_cards: state.get("Patrick"),
 
   P_1_sets: state.get("P_1_sets"),
-  AI_1_sets: state.get("AI_1_sets"),
-  AI_2_sets: state.get("AI_2_sets"),
-  AI_3_sets: state.get("AI_3_sets"),
+  Spongebob_sets: state.get("Spongebob_sets"),
+  Squidward_sets: state.get("Squidward_sets"),
+  Patrick_sets: state.get("Patrick_sets"),
 
   whoseTurn: state.get("whoseTurn"),
   beingAsked: state.get("playerBeingAsked"),
   optionAsked: state.get("optionAsked"),
 
-  response: state.get("response")
+  response: state.get("response"),
+  remDeck: state.get('remainingDeck').length
 
 });
 
-const mapDispatchToProps = {
-  dispatchSendCards: (asker: string, being_Asked: string, matchingCards: Card[]) => sendCards(asker, being_Asked, matchingCards),
-  dispatchGoFish: (asker: string) => goFish(asker),
-  // dispatchSetPlayerBeingAsked: (playerBeingAsked: string) => setPlayerBeingAsked(playerBeingAsked),
-  dispatchSetOptionAsked: (optionAsked: string) => setOptionAsked(optionAsked)
-
-};
-
 const duration = 300;
-
-const defaultStyle = {
-  transition: `opacity ${duration}ms ease-in-out`,
-  opacity: 0,
-}
 
 const transitionStyles = {
   entering: { display: 'block' },
@@ -57,127 +39,106 @@ const transitionStyles = {
 
 const AI_player = (props) => {
 
+  const setHighlightColor = () => {
+    if (props.myTurn) {
+      return highlightMyTurn
+    }
 
-  const getRandomInteger = (min: number, max: number) => {
-    min = Math.ceil(min);
-    max = Math.floor(max);
-    return Math.floor(Math.random() * (max - min + 1) + min);
-  };
+    if (props.asked) {
+      return highlightBeingAsked
+    }
+  }
 
-  const getRandomOption = (cards: Card[]) => {
-    let options: string[] = [];
-    cards.forEach((card) => {
-      let option = card.symbol;
-      if (!options.includes(option)) {
-        options.push(option);
-      }
-    });
-
-    let randomOption = options[getRandomInteger(0, options.length - 1)];
-    return randomOption;
-  };
 
   const mapIDtoStateProps = new Map();
   mapIDtoStateProps.set("P_1", props.P_1_cards);
-  mapIDtoStateProps.set("AI_1", props.AI_1_cards);
-  mapIDtoStateProps.set("AI_2", props.AI_2_cards);
-  mapIDtoStateProps.set("AI_3", props.AI_3_cards);
+  mapIDtoStateProps.set("Spongebob", props.Spongebob_cards);
+  mapIDtoStateProps.set("Squidward", props.Squidward_cards);
+  mapIDtoStateProps.set("Patrick", props.Patrick_cards);
 
   mapIDtoStateProps.set("P_1_sets", props.P_1_sets);
-  mapIDtoStateProps.set("AI_1_sets", props.AI_1_sets);
-  mapIDtoStateProps.set("AI_2_sets", props.AI_2_sets);
-  mapIDtoStateProps.set("AI_3_sets", props.AI_3_sets);
+  mapIDtoStateProps.set("Spongebob_sets", props.Spongebob_sets);
+  mapIDtoStateProps.set("Squidward_sets", props.Squidward_sets);
+  mapIDtoStateProps.set("Patrick_sets", props.Patrick_sets);
 
   const [isResponseVisible, setResponseVisibility] = useState(false)
   const [isQuestionVisible, setQuestionVisibility] = useState(false)
 
-  const revealThenHide = (conditionalTrigger: boolean) => {
-    conditionalTrigger = true
-    setTimeout(() => { conditionalTrigger = false }, 3000)
-  }
-
-  const revealQuestion = (updater) => {
-    updater(true)
-    setTimeout(() => updater(false), 3000)
-  }
-
-  const revealResponse = (updater) => {
-    setTimeout(() => updater(true), 3000)
-    setTimeout(() => updater(false), 6000)
-  }
-
+  // The AIs talk
   useEffect(() => {
-    // Ask
-    if (props.myTurn) {
-      revealQuestion(setQuestionVisibility)
-    }
+    if(props.remDeck > 0) {
 
-    // Respond
-    if (props.asked) {
+      // Ask
+      if (props.myTurn) {
 
-      let beingAskedCards: Card[] = mapIDtoStateProps.get(props.beingAsked);
-      let matchingCards: Card[] = beingAskedCards.filter((card) => card.symbol == props.optionAsked);
+        const showQuestion = setQuestionVisibility(true)
+        const hideQuestion = setTimeout(() => setQuestionVisibility(false), 3000)
 
-
-      if (matchingCards.length > 0) {
-        //"A matching card was found!"
-        console.log("Matching card triggered")
-        props.dispatchSendCards(props.whoseTurn, props.beingAsked, matchingCards);
-        revealResponse(setResponseVisibility)
-      } else {
-        //"No matching card. Go Fish!"
-        console.log("Go Fish triggered")
-        props.dispatchGoFish(props.whoseTurn);
-        revealResponse(setResponseVisibility)
+        showQuestion
+        hideQuestion
       }
 
+      // Respond
+      if (props.asked) {
+
+        const showResponse = setTimeout(() => setResponseVisibility(true), 3000)
+        const hideResponse = setTimeout(() => setResponseVisibility(false), 4500)
+
+        showResponse
+        hideResponse
+
+      }
     }
-  }, [props.whoseTurn])
+  }, [props.whoseTurn, props.optionAsked])
 
 
 
 
   return (
     <div
-      style={props.myTurn ? highlightStyle : {}}
+      style={setHighlightColor()}
+
       className={styles.container}
     >
-      <h4>{props.id}</h4>
       <p>
         {mapIDtoStateProps.get(`${props.id}_sets`).map((set) => (
           <span key={set} className={styles.completeSet}>{`${set} `}</span>
         ))}
       </p>
-      <div className={styles.imgContainer}>
-        <img src={props.picture} className={styles.symbol} />
-      </div>
-      <Transition in={isQuestionVisible} timeout={duration}>
-        {state =>
-          <p style={transitionStyles[state]}>{`Hey ${props.beingAsked}, do you have any ${props.optionAsked}'s ?`}</p>
-        }
-      </Transition>
+      <img src={props.picture} className={styles.avatar} />
+      <div className={styles.responses}>
+        <Transition in={isQuestionVisible} timeout={duration}>
+          {state =>
+            <p
+              style={transitionStyles[state]}
+              className={styles.responseText}
+            >{`Hey ${props.beingAsked}, do you have any ${props.optionAsked}'s ?`}</p>
+          }
+        </Transition>
 
-      <Transition in={isResponseVisible} timeout={duration}>
-        {state =>
-          <p style={transitionStyles[state]}>{props.response}</p>
-        }
-      </Transition>
+        <Transition in={isResponseVisible} timeout={duration}>
+          {state =>
+            <p
+              style={transitionStyles[state]}
+              className={styles.responseText}
+            >{props.response}</p>
+          }
+        </Transition>
+      </div>
 
     </div>
   );
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(AI_player);
+export default connect(mapStateToProps)(AI_player);
 
-const highlightStyle = {
+const highlightMyTurn = {
   border: "2px solid yellow",
   borderRadius: "5px",
+
 };
 
-const textVisible = {
-  display: "visible",
-};
-
-const textInvisible = {
-  display: "none",
-};
+const highlightBeingAsked = {
+  border: "2px solid #39FF14",
+  borderRadius: "5px",
+}

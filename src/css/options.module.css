@@ -1,9 +1,9 @@
 
-.optionsContainer {
-        flex: 'row';
-        /* border: 1px solid; */
+.options {
         margin: 0px;
         padding: 10px;
+        justify-content: center;
+        align-items: center;
 }
     
 .option {
@@ -20,4 +20,26 @@
 .option:disabled {
         background-color: #808080;
         border: 1px solid #808080;
+}
+
+.responseContainer {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+}
+
+.responseText {
+        font-size: 14px;
+        background-color: white;
+        color: black;
+        padding: 5px;
+        border-radius: 5px;
+}
+@media only screen and (min-width: 320px) {
+
+.option {
+        margin: 5px;
+}
+
 }

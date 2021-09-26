@@ -1,72 +1,131 @@
-import React from "react";
+import { stat } from "fs/promises";
+import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
-import { sendCards, goFish } from "../actions/actions";
+import { sendCards, goFish, setOptionAsked } from "../actions/actions";
 import styles from "../css/options.module.css";
 
-type Card = {
-  suite: string,
-  symbol: string,
-}
+import { Transition } from 'react-transition-group'
+
+const duration = 300;
+
+const transitionStyles = {
+  entering: { display: 'block' },
+  entered: { display: 'block' },
+  exiting: { display: 'block' },
+  exited: { display: 'none' },
+};
 
 
 const mapStateToProps = (state) => ({
   playerOneCards: state.get("P_1"),
-  AI_1_cards: state.get("AI_1"),
-  AI_2_cards: state.get("AI_2"),
-  AI_3_cards: state.get("AI_3"),
+  Spongebob_cards: state.get("Spongebob"),
+  Squidward_cards: state.get("Squidward"),
+  Patrick_cards: state.get("Patrick"),
+
+  beingAsked: state.get("playerBeingAsked"),
+  whoseTurn: state.get("whoseTurn"),
+  optionAsked: state.get("optionAsked"),
+
+  response: state.get("response")
 });
 
 const mapDispatchToProps = {
   dispatchSendCards: (asker, being_Asked, matchingCards) =>
     sendCards(asker, being_Asked, matchingCards),
   dispatchGoFish: (asker) => goFish(asker),
+  dispatchSetOptionAsked: (option: string) => setOptionAsked(option),
 };
 
+
+
 const Options = (props) => {
+
+  const [option, setOption] = useState("xx")
+  const [areOptionsVisible, setOptionsVisibility] = useState(true)
+  const [isP1ResponseVisible, setP1ResponseVisibility] = useState(false)
+  const [isP1QuestionVisible, setP1QuestionVisibility] = useState(false)
+
   const mapAItoCards = new Map();
 
-  mapAItoCards.set("AI_1", props.AI_1_cards);
-  mapAItoCards.set("AI_2", props.AI_2_cards);
-  mapAItoCards.set("AI_3", props.AI_3_cards);
+  mapAItoCards.set("Spongebob", props.Spongebob_cards);
+  mapAItoCards.set("Squidward", props.Squidward_cards);
+  mapAItoCards.set("Patrick", props.Patrick_cards);
 
   let options: string[] = props.options;
 
   const P1_ask = (selectedOption: string) => {
-    if (props.whoseTurn == "P_1") {
 
-      let option = selectedOption;
-      let asker = "P_1";
-      let being_Asked: string = props.beingAsked;
+    setOption(selectedOption)
 
-      let beingAsked_Cards: Card[] = mapAItoCards.get(being_Asked);
-      let matchingCards: Card[] = beingAsked_Cards.filter(
-        (card) => card.symbol == option
-      );
+    // to trigger re-render
+    props.dispatchSetOptionAsked(selectedOption)
 
-      if (matchingCards.length > 0) {
-        // console.log("A matching card was found!");
-        props.dispatchSendCards(asker, being_Asked, matchingCards);
-      } else {
-        // console.log("No matching card. Go Fish!");
-        props.dispatchGoFish(asker);
-      }
+    setOptionsVisibility(false)
+
+    const showQuestion = setP1QuestionVisibility(true)
+    const hideQuestion = setTimeout(() => setP1QuestionVisibility(false), 3000)
+
+    showQuestion
+    hideQuestion
+
+  }
+
+  useEffect(() => {
+    if (props.P_1_asked && props.whoseTurn != "P_1") {
+
+
+      const showResponse = setTimeout(() => setP1ResponseVisibility(true), 3000)
+      const hideResponse = setTimeout(() => setP1ResponseVisibility(false), 4500)
+
+      showResponse
+      hideResponse
     }
-  };
 
-  return (
-    <div className={styles.optionsContainer}>
+    if (props.whoseTurn == "P_1") {
+      setOptionsVisibility(true)
+    }
+  }, [props.whoseTurn])
+
+
+
+
+return (
+  <>
+    <div className={styles.options}>
       {options.map((option) => (
         <button
           onClick={() => P1_ask(option)}
           key={option}
           className={styles.option}
-          disabled={!props.P_1_turn}
+          disabled={!areOptionsVisible}
         >
           {option}
         </button>
       ))}
     </div>
-  );
+
+    <div className={styles.responseContainer}>
+      <Transition in={isP1QuestionVisible} timeout={duration}>
+        {state =>
+          <p
+            style={transitionStyles[state]}
+            className={styles.responseText}
+          >{`Hey ${props.beingAsked}, do you have any ${option}'s ?`}</p>
+        }
+      </Transition>
+
+      <Transition in={isP1ResponseVisible} timeout={duration}>
+        {state =>
+          <p
+            style={transitionStyles[state]}
+            className={styles.responseText}
+          >{props.response}</p>
+        }
+      </Transition>
+    </div>
+
+  </>
+);
 };
 
 
