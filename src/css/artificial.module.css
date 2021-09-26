@@ -15,7 +15,7 @@
   height: 80px;
   width: 80px;
   border-radius: 40px;
-  position: fixed;
+  position: absolute;
   z-index: 1;
 }
 
@@ -35,7 +35,7 @@ h4 {
 
 .responses {
   z-index: 2;
-  position: fixed;
+  position: absolute;
 
 }
 
