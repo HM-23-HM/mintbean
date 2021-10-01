@@ -32,7 +32,6 @@ const PlayerOne = (props) => {
               key={card.suite + card.symbol}
               suite={card.suite}
               symbol={card.symbol}
-              className={styles.playerOneDeck}
             />
           ))}
       </Carousel>

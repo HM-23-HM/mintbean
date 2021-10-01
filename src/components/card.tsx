@@ -6,7 +6,7 @@ import diamonds from '../img/diamonds.png'
 import styles from '../css/card.module.css'
 
 
-const Card = ({suite, symbol, className}) => {
+const Card = ({suite, symbol}) => {
 
 const suites = new Map()
 

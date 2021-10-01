@@ -9,6 +9,10 @@
     flex-direction: column;
     align-items: center;
     justify-items: center;
+    border-width: 1px;
+    border-radius: 5px;;
+    background-color: #c65555;
+    padding: 5px;
 }
 
 .deckText {

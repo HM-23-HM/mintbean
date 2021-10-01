@@ -133,12 +133,14 @@ const AI_player = (props) => {
 export default connect(mapStateToProps)(AI_player);
 
 const highlightMyTurn = {
-  border: "2px solid yellow",
+  border: "2px solid #0000FF",
+  borderWidth: "5px",
   borderRadius: "5px",
 
 };
 
 const highlightBeingAsked = {
-  border: "2px solid #39FF14",
+  border: "2px solid rgb(24,103,23)",
+  borderWidth: "5px",
   borderRadius: "5px",
 }

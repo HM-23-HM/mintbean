@@ -9,6 +9,7 @@
 .imgContainer {
   border-width: 1px;
   border-color: black;
+
 }
 
 .avatar {
@@ -35,7 +36,7 @@ h4 {
 
 .responses {
   z-index: 2;
-  position: absolute;
+  position: fixed;
 
 }
 
