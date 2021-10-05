@@ -1,3 +1,8 @@
+#modalBody p {
+    border-width: 1px;
+    max-width: 75ch;
+}
+
 .help {
     border: 0.5px '#000';
     border-radius: 5px;
@@ -6,16 +11,16 @@
 }
 
 
-.modalText {
-    max-width: 75ch;
-}
-
-
 @media only screen and (min-width: 320px) {
 
 
     .help {
         font-size: 12px;
+    }
+
+    .image {
+        height: 172px;
+        width: 160px;
     }
 
 }

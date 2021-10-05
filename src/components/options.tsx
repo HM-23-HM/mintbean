@@ -2,7 +2,7 @@ import { stat } from "fs/promises";
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { sendCards, goFish, setOptionAsked } from "../actions/actions";
-import styles from "../css/options.module.css";
+import styles from '../css/options.module.css'
 
 import { Transition } from 'react-transition-group'
 
